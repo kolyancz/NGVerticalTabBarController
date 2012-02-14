@@ -24,6 +24,8 @@
 
 /** The tableView used to display all tab bar elements */
 @property (nonatomic, strong, readonly) NGVerticalTabBar *tabBar;
+/** The class of the tableViewCell of the tabBar, defaults to NGVerticalTabBarCell */
+@property (nonatomic, assign) Class tabBarCellClass;
 
 /** Sets the view controllers of the tab bar controller. */
 - (void)setViewControllers:(NSArray *)viewControllers animated:(BOOL)animated;

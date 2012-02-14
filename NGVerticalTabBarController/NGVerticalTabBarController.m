@@ -22,10 +22,11 @@
 // re-defined as read/write
 @property (nonatomic, strong, readwrite) NGVerticalTabBar *tabBar;
 
+@property (nonatomic, readonly) CGRect childViewControllerFrame;
+
 - (void)updateUI;
 
 - (CGFloat)askDelegateForWidthOfTabBar;
-- (NGVerticalTabBarCell *)askDelegateForCellOfViewController:(UIViewController *)viewController atIndex:(NSUInteger)index;
 - (BOOL)askDelegateIfWeShouldSelectViewController:(UIViewController *)viewController atIndex:(NSUInteger)index;
 - (void)callDelegateDidSelectViewController:(UIViewController *)viewController atIndex:(NSUInteger)index;
 
@@ -37,6 +38,7 @@
 @synthesize selectedIndex = selectedIndex_;
 @synthesize delegate = delegate_;
 @synthesize tabBar = tabBar_;
+@synthesize tabBarCellClass = tabBarCellClass_;
 
 ////////////////////////////////////////////////////////////////////////
 #pragma mark - Lifecycle
@@ -44,6 +46,8 @@
 
 - (id)initWithViewControllers:(NSArray *)viewControllers {
     if ((self = [super initWithNibName:nil bundle:nil])) {
+        tabBarCellClass_ = [NGVerticalTabBarCell class];
+        
         if (viewControllers.count > 0) {
             viewControllers_ = [NSMutableArray arrayWithArray:viewControllers];
             selectedIndex_ = 0;
@@ -69,9 +73,9 @@
     
     CGFloat width = [self askDelegateForWidthOfTabBar];
     self.tabBar = [[NGVerticalTabBar alloc] initWithFrame:CGRectMake(0.f, 0.f, width, self.view.bounds.size.height) style:UITableViewStylePlain];
-    
     self.tabBar.dataSource = self;
     self.tabBar.delegate = self;
+    [self.view addSubview:self.tabBar];
 }
 
 - (void)viewDidUnload {
@@ -132,7 +136,20 @@
 
 - (void)setViewControllers:(NSArray *)viewControllers {
     if (viewControllers != viewControllers_) {
+        // remove old child view controller
+        for (UIViewController *viewController in viewControllers_) {
+            [viewController removeFromParentViewController];
+        }
+        
         viewControllers_ = [NSMutableArray arrayWithArray:viewControllers];
+        
+        // add new child view controller
+        CGRect childViewControllerFrame = self.childViewControllerFrame;
+        
+        for (UIViewController *viewController in viewControllers_) {
+            [self addChildViewController:viewController];
+            viewController.view.frame = childViewControllerFrame;
+        }
         
         [self updateUI];
     }
@@ -150,16 +167,80 @@
 #pragma mark - UITableViewDataSource
 ////////////////////////////////////////////////////////////////////////
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return self.viewControllers.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    NGVerticalTabBarCell *cell = [self.tabBarCellClass cellForTabBar:self.tabBar];
+    UIViewController *viewController = [self.viewControllers objectAtIndex:indexPath.row];
+    
+    // give delegate the chance to customize cell
+    cell = [self.delegate verticalTabBarController:self
+                                    customizedCell:cell
+                                 forViewController:viewController
+                                           atIndex:indexPath.row];
+    
+    return cell;
+}
+
 ////////////////////////////////////////////////////////////////////////
 #pragma mark - UITableViewDelegate
 ////////////////////////////////////////////////////////////////////////
+
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // ask the delegate if we can select the cell
+    if ([self askDelegateIfWeShouldSelectViewController:[self.viewControllers objectAtIndex:indexPath.row] atIndex:indexPath.row]) {
+        return indexPath;
+    }
+    
+    return nil;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // did the selection change?
+    if (indexPath.row != self.selectedIndex) {
+        UIViewController *viewController = [self.viewControllers objectAtIndex:indexPath.row];
+        
+        // updates the UI
+        self.selectedIndex = indexPath.row;
+        // call the delegate that we changed selection
+        [self callDelegateDidSelectViewController:viewController atIndex:indexPath.row];
+    }
+}
 
 ////////////////////////////////////////////////////////////////////////
 #pragma mark - Private
 ////////////////////////////////////////////////////////////////////////
 
 - (void)updateUI {
-    // TODO: Update UI depending on current state
+    if (self.selectedIndex != NSNotFound) {
+        NSIndexPath *oldSelectedIndexPath = self.tabBar.indexPathForSelectedRow;
+        NSIndexPath *newSelectedIndexPath = [NSIndexPath indexPathForRow:self.selectedIndex inSection:0];
+        UIViewController *oldSelectedViewController = [self.viewControllers objectAtIndex:oldSelectedIndexPath.row];
+        UIViewController *newSelectedViewController = self.selectedViewController;
+        
+        [self.tabBar deselectRowAtIndexPath:oldSelectedIndexPath animated:YES];
+        [self.tabBar selectRowAtIndexPath:newSelectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+        
+        [self transitionFromViewController:oldSelectedViewController
+                          toViewController:newSelectedViewController
+                                  duration:0.4
+                                   options:UIViewAnimationOptionTransitionCrossDissolve
+                                animations:^{
+                                    // TODO: customize animation?
+                                } completion:^(BOOL finished) {
+                                    [newSelectedViewController didMoveToParentViewController:self];
+                                }];
+    }
+}
+
+- (CGRect)childViewControllerFrame {
+    return UIEdgeInsetsInsetRect(self.view.bounds, UIEdgeInsetsMake(0, [self askDelegateForWidthOfTabBar], 0.f, 0.f));
 }
 
 - (CGFloat)askDelegateForWidthOfTabBar {
@@ -167,11 +248,8 @@
         return [self.delegate widthOfTabBarOfVerticalTabBarController:self];
     }
     
+    // default width
     return kNGTabBarControllerDefaultWidth;
-}
-
-- (NGVerticalTabBarCell *)askDelegateForCellOfViewController:(UIViewController *)viewController atIndex:(NSUInteger)index {
-    return [self.delegate verticalTabBarController:self cellForViewController:viewController atIndex:index];
 }
 
 - (BOOL)askDelegateIfWeShouldSelectViewController:(UIViewController *)viewController atIndex:(NSUInteger)index {

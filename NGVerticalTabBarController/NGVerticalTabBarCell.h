@@ -6,8 +6,11 @@
 //  Copyright (c) 2012 NOUS Wissensmanagement GmbH. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@class NGVerticalTabBar;
 
 @interface NGVerticalTabBarCell : UITableViewCell
+
++ (id)cellForTabBar:(NGVerticalTabBar *)tabBar;
+
 
 @end

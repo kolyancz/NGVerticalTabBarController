@@ -13,9 +13,10 @@
 
 @required
 
-/** Asks the delegate for a customized cell */
+/** Asks the delegate to customized the cell of the tabBar */
 - (NGVerticalTabBarCell *)verticalTabBarController:(NGVerticalTabBarController *)tabBarController
-                             cellForViewController:(UIViewController *)viewController
+                                    customizedCell:(NGVerticalTabBarCell *)cell
+                                 forViewController:(UIViewController *)viewController
                                            atIndex:(NSUInteger)index;
 
 @optional

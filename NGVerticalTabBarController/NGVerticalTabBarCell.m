@@ -1,21 +1,17 @@
 #import "NGVerticalTabBarCell.h"
+#import "NGVerticalTabBar.h"
 
 @implementation NGVerticalTabBarCell
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
-{
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self) {
-        // Initialization code
++ (id)cellForTabBar:(NGVerticalTabBar *)tabBar {
+    NSString *reuseIdentifier = NSStringFromClass([self class]);
+    NGVerticalTabBarCell *cell = [tabBar dequeueReusableCellWithIdentifier:reuseIdentifier];
+    
+    if (cell == nil) {
+        cell = [[self alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
     }
-    return self;
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-{
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
+    
+    return cell; 
 }
 
 @end
