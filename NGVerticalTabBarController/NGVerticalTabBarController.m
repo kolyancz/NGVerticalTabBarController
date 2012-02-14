@@ -24,6 +24,7 @@
 @property (nonatomic, strong, readwrite) NGVerticalTabBar *tabBar;
 
 @property (nonatomic, readonly) CGRect childViewControllerFrame;
+@property (nonatomic, assign) NSUInteger oldSelectedIndex;
 
 - (void)updateUI;
 
@@ -41,6 +42,7 @@
 @synthesize delegate = delegate_;
 @synthesize tabBar = tabBar_;
 @synthesize tabBarCellClass = tabBarCellClass_;
+@synthesize oldSelectedIndex = oldSelectedIndex_;
 
 ////////////////////////////////////////////////////////////////////////
 #pragma mark - Lifecycle
@@ -57,6 +59,9 @@
             viewControllers_ = [NSMutableArray array];
             selectedIndex_ = NSNotFound;
         }
+       
+        oldSelectedIndex_ = 0;
+        
     }
     
     return self;
@@ -160,6 +165,11 @@
 
 - (void)setSelectedIndex:(NSUInteger)selectedIndex {
     if (selectedIndex != selectedIndex_) {
+        
+        if(selectedIndex_ != NSNotFound) {
+            self.oldSelectedIndex = selectedIndex_;
+        }
+        
         selectedIndex_ = selectedIndex;
         
         [self updateUI];
@@ -226,10 +236,11 @@
 
 - (void)updateUI {
     if (self.selectedIndex != NSNotFound) {
-        NSIndexPath *oldSelectedIndexPath = self.tabBar.indexPathForSelectedRow;
+        NSIndexPath *oldSelectedIndexPath =[NSIndexPath indexPathForRow:self.oldSelectedIndex inSection:0];
         NSIndexPath *newSelectedIndexPath = [NSIndexPath indexPathForRow:self.selectedIndex inSection:0];
         UIViewController *oldSelectedViewController = [self.viewControllers objectAtIndex:oldSelectedIndexPath.row];
         UIViewController *newSelectedViewController = self.selectedViewController;
+        
         
         [self.tabBar deselectRowAtIndexPath:oldSelectedIndexPath animated:YES];
         [self.tabBar selectRowAtIndexPath:newSelectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
