@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		9B80B53114EA8F7100B83FA0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B80B53014EA8F7100B83FA0 /* Foundation.framework */; };
 		9B80B53714EA8F7100B83FA0 /* NGVerticalTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B80B53614EA8F7100B83FA0 /* NGVerticalTabBarController.m */; };
+		9B80B54214EA91C400B83FA0 /* NGVerticalTabBarControllerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B80B54114EA91C300B83FA0 /* NGVerticalTabBarControllerDelegate.h */; };
+		9B80B54514EA9E1000B83FA0 /* NGVerticalTabBarCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B80B54314EA9E1000B83FA0 /* NGVerticalTabBarCell.h */; };
+		9B80B54614EA9E1000B83FA0 /* NGVerticalTabBarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B80B54414EA9E1000B83FA0 /* NGVerticalTabBarCell.m */; };
+		9B80B54914EA9E2900B83FA0 /* NGVerticalTabBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B80B54714EA9E2900B83FA0 /* NGVerticalTabBar.h */; };
+		9B80B54A14EA9E2900B83FA0 /* NGVerticalTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B80B54814EA9E2900B83FA0 /* NGVerticalTabBar.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -17,6 +22,11 @@
 		9B80B53414EA8F7100B83FA0 /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
 		9B80B53514EA8F7100B83FA0 /* NGVerticalTabBarController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NGVerticalTabBarController.h; sourceTree = "<group>"; };
 		9B80B53614EA8F7100B83FA0 /* NGVerticalTabBarController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NGVerticalTabBarController.m; sourceTree = "<group>"; };
+		9B80B54114EA91C300B83FA0 /* NGVerticalTabBarControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NGVerticalTabBarControllerDelegate.h; sourceTree = "<group>"; };
+		9B80B54314EA9E1000B83FA0 /* NGVerticalTabBarCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NGVerticalTabBarCell.h; sourceTree = "<group>"; };
+		9B80B54414EA9E1000B83FA0 /* NGVerticalTabBarCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NGVerticalTabBarCell.m; sourceTree = "<group>"; };
+		9B80B54714EA9E2900B83FA0 /* NGVerticalTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NGVerticalTabBar.h; sourceTree = "<group>"; };
+		9B80B54814EA9E2900B83FA0 /* NGVerticalTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NGVerticalTabBar.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +71,11 @@
 			children = (
 				9B80B53514EA8F7100B83FA0 /* NGVerticalTabBarController.h */,
 				9B80B53614EA8F7100B83FA0 /* NGVerticalTabBarController.m */,
+				9B80B54714EA9E2900B83FA0 /* NGVerticalTabBar.h */,
+				9B80B54814EA9E2900B83FA0 /* NGVerticalTabBar.m */,
+				9B80B54314EA9E1000B83FA0 /* NGVerticalTabBarCell.h */,
+				9B80B54414EA9E1000B83FA0 /* NGVerticalTabBarCell.m */,
+				9B80B54114EA91C300B83FA0 /* NGVerticalTabBarControllerDelegate.h */,
 				9B80B53314EA8F7100B83FA0 /* Supporting Files */,
 			);
 			path = NGVerticalTabBarController;
@@ -81,6 +96,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B80B54214EA91C400B83FA0 /* NGVerticalTabBarControllerDelegate.h in Headers */,
+				9B80B54514EA9E1000B83FA0 /* NGVerticalTabBarCell.h in Headers */,
+				9B80B54914EA9E2900B83FA0 /* NGVerticalTabBar.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,6 +154,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				9B80B53714EA8F7100B83FA0 /* NGVerticalTabBarController.m in Sources */,
+				9B80B54614EA9E1000B83FA0 /* NGVerticalTabBarCell.m in Sources */,
+				9B80B54A14EA9E2900B83FA0 /* NGVerticalTabBar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
