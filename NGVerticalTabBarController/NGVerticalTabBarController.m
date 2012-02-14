@@ -5,7 +5,7 @@
 
 // the default width of the tabBar
 #define kNGTabBarControllerDefaultWidth     150.f
-
+#define kNGTabBarCellDefaultHeight          120.f
 
 @interface NGVerticalTabBarController () <UITableViewDataSource, UITableViewDelegate> {
     // re-defined as mutable
@@ -14,6 +14,7 @@
     // flags for methods implemented in the delegate
     struct {
         unsigned int widthOfTabBar:1;
+        unsigned int heightForTabBarCellAtIndex:1;
 		unsigned int shouldSelectViewController:1;
 		unsigned int didSelectViewController:1;
 	} delegateFlags_;
@@ -29,6 +30,7 @@
 - (CGFloat)askDelegateForWidthOfTabBar;
 - (BOOL)askDelegateIfWeShouldSelectViewController:(UIViewController *)viewController atIndex:(NSUInteger)index;
 - (void)callDelegateDidSelectViewController:(UIViewController *)viewController atIndex:(NSUInteger)index;
+- (CGFloat)askDelegateForHeightOfTabBarCellAtIndex:(NSUInteger)index;
 
 @end
 
@@ -102,6 +104,7 @@
         
         // update delegate flags
         delegateFlags_.widthOfTabBar = [delegate respondsToSelector:@selector(widthOfTabBarOfVerticalTabBarController:)];
+        delegateFlags_.heightForTabBarCellAtIndex = [delegate respondsToSelector:@selector(heightForTabBarCell:atIndex:)];
         delegateFlags_.shouldSelectViewController = [delegate respondsToSelector:@selector(verticalTabBarController:shouldSelectViewController:atIndex:)];
         delegateFlags_.didSelectViewController = [delegate respondsToSelector:@selector(verticalTabBarController:didSelectViewController:atIndex:)];
     }
@@ -213,6 +216,10 @@
     }
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return [self askDelegateForHeightOfTabBarCellAtIndex:[indexPath row]];
+}
+
 ////////////////////////////////////////////////////////////////////////
 #pragma mark - Private
 ////////////////////////////////////////////////////////////////////////
@@ -265,6 +272,14 @@
     if (delegateFlags_.didSelectViewController) {
         [self.delegate verticalTabBarController:self didSelectViewController:viewController atIndex:index];
     }
+}
+
+- (CGFloat)askDelegateForHeightOfTabBarCellAtIndex:(NSUInteger)index {
+    if(delegateFlags_.heightForTabBarCellAtIndex) {
+        return [self.delegate heightForTabBarCell:self atIndex:index];
+    }
+
+    return kNGTabBarCellDefaultHeight;
 }
 
 @end

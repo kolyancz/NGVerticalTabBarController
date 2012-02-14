@@ -6,8 +6,9 @@
 //  Copyright (c) 2012 NOUS Wissensmanagement GmbH. All rights reserved.
 //
 
-@protocol NGVerticalTabBarControllerDelegate;
-@class NGVerticalTabBar;
+#import "NGVerticalTabBarControllerDelegate.h"
+#import "NGVerticalTabBar.h"
+
 
 /** NGVerticalTabBarController is a vertical TabBar displayed on the left side of the device */
 @interface NGVerticalTabBarController : UIViewController

@@ -24,6 +24,9 @@
 /** Asks the delegate for the width of the UITableView that acts as the tabBar */
 - (CGFloat)widthOfTabBarOfVerticalTabBarController:(NGVerticalTabBarController *)tabBarController;
 
+/** Asks the delegate fot the specific height of an NGVerticalTabBarCell */
+- (CGFloat)heightForTabBarCell:(NGVerticalTabBarController *)tabBarController atIndex:(NSUInteger)index;
+
 /** Asks the delegate whether the specified view controller should be made active. */
 - (BOOL)verticalTabBarController:(NGVerticalTabBarController *)tabBarController 
       shouldSelectViewController:(UIViewController *)viewController
