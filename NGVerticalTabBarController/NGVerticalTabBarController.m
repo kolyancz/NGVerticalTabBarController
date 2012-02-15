@@ -245,18 +245,17 @@
         NSIndexPath *newSelectedIndexPath = [NSIndexPath indexPathForRow:self.selectedIndex inSection:0];
         UIViewController *newSelectedViewController = self.selectedViewController;
         [self.tabBar selectRowAtIndexPath:newSelectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
-      
         
         //show transition between old and new child viewcontroller
         if(self.oldSelectedIndex != NSNotFound) {
             NSIndexPath *oldSelectedIndexPath =[NSIndexPath indexPathForRow:self.oldSelectedIndex inSection:0];
             UIViewController *oldSelectedViewController = [self.viewControllers objectAtIndex:oldSelectedIndexPath.row];
             [self.tabBar deselectRowAtIndexPath:oldSelectedIndexPath animated:YES];
-       
+     
             [self transitionFromViewController:oldSelectedViewController
                               toViewController:newSelectedViewController
                                       duration:0.4f
-                                       options:UIViewAnimationOptionTransitionCurlUp
+                                       options:(self.oldSelectedIndex > self.selectedIndex)? UIViewAnimationOptionTransitionCurlDown : UIViewAnimationOptionTransitionCurlUp
                                     animations:^{
                                         // TODO: customize animation?
                                     } completion:^(BOOL finished) {
