@@ -60,7 +60,7 @@
             selectedIndex_ = NSNotFound;
         }
        
-        oldSelectedIndex_ = 0;
+        oldSelectedIndex_ = NSNotFound;
         
     }
     
@@ -159,7 +159,11 @@
             viewController.view.frame = childViewControllerFrame;
         }
         
-        [self.view addSubview:[[viewControllers_ objectAtIndex:0] view]];
+        if(self.selectedIndex == NSNotFound) {
+            self.selectedIndex = 0;
+        }
+        
+        [self.view addSubview:[[viewControllers_ objectAtIndex:self.selectedIndex] view]];
         
         [self updateUI];
     }
@@ -168,9 +172,8 @@
 - (void)setSelectedIndex:(NSUInteger)selectedIndex {
     if (selectedIndex != selectedIndex_) {
         
-        if(selectedIndex_ != NSNotFound) {
-            self.oldSelectedIndex = selectedIndex_;
-        }
+        self.oldSelectedIndex = selectedIndex_;
+        
         
         selectedIndex_ = selectedIndex;
         
@@ -238,26 +241,33 @@
 
 - (void)updateUI {
     if (self.selectedIndex != NSNotFound) {
-        NSIndexPath *oldSelectedIndexPath =[NSIndexPath indexPathForRow:self.oldSelectedIndex inSection:0];
+        
         NSIndexPath *newSelectedIndexPath = [NSIndexPath indexPathForRow:self.selectedIndex inSection:0];
-        UIViewController *oldSelectedViewController = [self.viewControllers objectAtIndex:oldSelectedIndexPath.row];
         UIViewController *newSelectedViewController = self.selectedViewController;
-        
-        [self.tabBar deselectRowAtIndexPath:oldSelectedIndexPath animated:YES];
         [self.tabBar selectRowAtIndexPath:newSelectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+      
         
-        [self transitionFromViewController:oldSelectedViewController
-                          toViewController:newSelectedViewController
-                                  duration:0.4f
-                                   options:UIViewAnimationOptionTransitionCurlUp
-                                animations:^{
-                                    // TODO: customize animation?
-                                } completion:^(BOOL finished) {
-                                    if(finished){
-                                        [newSelectedViewController didMoveToParentViewController:self];
-                                     }
-                                }];
-         
+        //show transition between old and new child viewcontroller
+        if(self.oldSelectedIndex != NSNotFound) {
+            NSIndexPath *oldSelectedIndexPath =[NSIndexPath indexPathForRow:self.oldSelectedIndex inSection:0];
+            UIViewController *oldSelectedViewController = [self.viewControllers objectAtIndex:oldSelectedIndexPath.row];
+            [self.tabBar deselectRowAtIndexPath:oldSelectedIndexPath animated:YES];
+       
+            [self transitionFromViewController:oldSelectedViewController
+                              toViewController:newSelectedViewController
+                                      duration:0.4f
+                                       options:UIViewAnimationOptionTransitionCurlUp
+                                    animations:^{
+                                        // TODO: customize animation?
+                                    } completion:^(BOOL finished) {
+                                        if(finished){
+                                            [newSelectedViewController didMoveToParentViewController:self];
+                                        }
+                                    }];
+        }
+        else {
+            [newSelectedViewController didMoveToParentViewController:self];
+        }
     }
 }
 
