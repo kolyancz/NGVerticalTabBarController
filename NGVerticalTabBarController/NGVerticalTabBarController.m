@@ -159,6 +159,8 @@
             viewController.view.frame = childViewControllerFrame;
         }
         
+        [self.view addSubview:[[viewControllers_ objectAtIndex:0] view]];
+        
         [self updateUI];
     }
 }
@@ -241,19 +243,21 @@
         UIViewController *oldSelectedViewController = [self.viewControllers objectAtIndex:oldSelectedIndexPath.row];
         UIViewController *newSelectedViewController = self.selectedViewController;
         
-        
         [self.tabBar deselectRowAtIndexPath:oldSelectedIndexPath animated:YES];
         [self.tabBar selectRowAtIndexPath:newSelectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
         
         [self transitionFromViewController:oldSelectedViewController
                           toViewController:newSelectedViewController
-                                  duration:0.4
-                                   options:UIViewAnimationOptionTransitionCrossDissolve
+                                  duration:0.4f
+                                   options:UIViewAnimationOptionTransitionCurlUp
                                 animations:^{
                                     // TODO: customize animation?
                                 } completion:^(BOOL finished) {
-                                    [newSelectedViewController didMoveToParentViewController:self];
+                                    if(finished){
+                                        [newSelectedViewController didMoveToParentViewController:self];
+                                     }
                                 }];
+         
     }
 }
 
