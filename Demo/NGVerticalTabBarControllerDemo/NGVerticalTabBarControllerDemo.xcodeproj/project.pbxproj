@@ -1,0 +1,329 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9BEA2B5714ED1B4A00AEE977 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BEA2B5614ED1B4A00AEE977 /* UIKit.framework */; };
+		9BEA2B5914ED1B4A00AEE977 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BEA2B5814ED1B4A00AEE977 /* Foundation.framework */; };
+		9BEA2B5B14ED1B4A00AEE977 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BEA2B5A14ED1B4A00AEE977 /* CoreGraphics.framework */; };
+		9BEA2B6114ED1B4A00AEE977 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9BEA2B5F14ED1B4A00AEE977 /* InfoPlist.strings */; };
+		9BEA2B6314ED1B4A00AEE977 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEA2B6214ED1B4A00AEE977 /* main.m */; };
+		9BEA2B6714ED1B4A00AEE977 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEA2B6614ED1B4A00AEE977 /* AppDelegate.m */; };
+		9BEA2B7F14ED1B8900AEE977 /* libNGVerticalTabBarController.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BEA2B7214ED1B5A00AEE977 /* libNGVerticalTabBarController.a */; };
+		9BEA2B8214ED1BC300AEE977 /* NGColoredViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEA2B8114ED1BC300AEE977 /* NGColoredViewController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9BEA2B7114ED1B5A00AEE977 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9BEA2B6D14ED1B5A00AEE977 /* NGVerticalTabBarController.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9B80B52D14EA8F7100B83FA0;
+			remoteInfo = NGVerticalTabBarController;
+		};
+		9BEA2B7D14ED1B8300AEE977 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9BEA2B6D14ED1B5A00AEE977 /* NGVerticalTabBarController.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9B80B52C14EA8F7100B83FA0;
+			remoteInfo = NGVerticalTabBarController;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		9BEA2B5214ED1B4A00AEE977 /* NGVerticalTabBarControllerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NGVerticalTabBarControllerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9BEA2B5614ED1B4A00AEE977 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		9BEA2B5814ED1B4A00AEE977 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		9BEA2B5A14ED1B4A00AEE977 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		9BEA2B5E14ED1B4A00AEE977 /* NGVerticalTabBarControllerDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NGVerticalTabBarControllerDemo-Info.plist"; sourceTree = "<group>"; };
+		9BEA2B6014ED1B4A00AEE977 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		9BEA2B6214ED1B4A00AEE977 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		9BEA2B6414ED1B4A00AEE977 /* NGVerticalTabBarControllerDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NGVerticalTabBarControllerDemo-Prefix.pch"; sourceTree = "<group>"; };
+		9BEA2B6514ED1B4A00AEE977 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		9BEA2B6614ED1B4A00AEE977 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		9BEA2B6D14ED1B5A00AEE977 /* NGVerticalTabBarController.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = NGVerticalTabBarController.xcodeproj; path = ../../NGVerticalTabBarController.xcodeproj; sourceTree = "<group>"; };
+		9BEA2B8014ED1BC300AEE977 /* NGColoredViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NGColoredViewController.h; sourceTree = "<group>"; };
+		9BEA2B8114ED1BC300AEE977 /* NGColoredViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NGColoredViewController.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9BEA2B4F14ED1B4A00AEE977 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9BEA2B7F14ED1B8900AEE977 /* libNGVerticalTabBarController.a in Frameworks */,
+				9BEA2B5714ED1B4A00AEE977 /* UIKit.framework in Frameworks */,
+				9BEA2B5914ED1B4A00AEE977 /* Foundation.framework in Frameworks */,
+				9BEA2B5B14ED1B4A00AEE977 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9BEA2B4714ED1B4A00AEE977 = {
+			isa = PBXGroup;
+			children = (
+				9BEA2B5C14ED1B4A00AEE977 /* NGVerticalTabBarControllerDemo */,
+				9BEA2B5514ED1B4A00AEE977 /* Frameworks */,
+				9BEA2B5314ED1B4A00AEE977 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9BEA2B5314ED1B4A00AEE977 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9BEA2B5214ED1B4A00AEE977 /* NGVerticalTabBarControllerDemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9BEA2B5514ED1B4A00AEE977 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9BEA2B6D14ED1B5A00AEE977 /* NGVerticalTabBarController.xcodeproj */,
+				9BEA2B5614ED1B4A00AEE977 /* UIKit.framework */,
+				9BEA2B5814ED1B4A00AEE977 /* Foundation.framework */,
+				9BEA2B5A14ED1B4A00AEE977 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9BEA2B5C14ED1B4A00AEE977 /* NGVerticalTabBarControllerDemo */ = {
+			isa = PBXGroup;
+			children = (
+				9BEA2B6514ED1B4A00AEE977 /* AppDelegate.h */,
+				9BEA2B6614ED1B4A00AEE977 /* AppDelegate.m */,
+				9BEA2B8014ED1BC300AEE977 /* NGColoredViewController.h */,
+				9BEA2B8114ED1BC300AEE977 /* NGColoredViewController.m */,
+				9BEA2B5D14ED1B4A00AEE977 /* Supporting Files */,
+			);
+			path = NGVerticalTabBarControllerDemo;
+			sourceTree = "<group>";
+		};
+		9BEA2B5D14ED1B4A00AEE977 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				9BEA2B5E14ED1B4A00AEE977 /* NGVerticalTabBarControllerDemo-Info.plist */,
+				9BEA2B5F14ED1B4A00AEE977 /* InfoPlist.strings */,
+				9BEA2B6214ED1B4A00AEE977 /* main.m */,
+				9BEA2B6414ED1B4A00AEE977 /* NGVerticalTabBarControllerDemo-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		9BEA2B6E14ED1B5A00AEE977 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9BEA2B7214ED1B5A00AEE977 /* libNGVerticalTabBarController.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9BEA2B5114ED1B4A00AEE977 /* NGVerticalTabBarControllerDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9BEA2B6A14ED1B4A00AEE977 /* Build configuration list for PBXNativeTarget "NGVerticalTabBarControllerDemo" */;
+			buildPhases = (
+				9BEA2B4E14ED1B4A00AEE977 /* Sources */,
+				9BEA2B4F14ED1B4A00AEE977 /* Frameworks */,
+				9BEA2B5014ED1B4A00AEE977 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9BEA2B7E14ED1B8300AEE977 /* PBXTargetDependency */,
+			);
+			name = NGVerticalTabBarControllerDemo;
+			productName = NGVerticalTabBarControllerDemo;
+			productReference = 9BEA2B5214ED1B4A00AEE977 /* NGVerticalTabBarControllerDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9BEA2B4914ED1B4A00AEE977 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+				ORGANIZATIONNAME = "NOUS Wissensmanagement GmbH";
+			};
+			buildConfigurationList = 9BEA2B4C14ED1B4A00AEE977 /* Build configuration list for PBXProject "NGVerticalTabBarControllerDemo" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 9BEA2B4714ED1B4A00AEE977;
+			productRefGroup = 9BEA2B5314ED1B4A00AEE977 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 9BEA2B6E14ED1B5A00AEE977 /* Products */;
+					ProjectRef = 9BEA2B6D14ED1B5A00AEE977 /* NGVerticalTabBarController.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				9BEA2B5114ED1B4A00AEE977 /* NGVerticalTabBarControllerDemo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		9BEA2B7214ED1B5A00AEE977 /* libNGVerticalTabBarController.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libNGVerticalTabBarController.a;
+			remoteRef = 9BEA2B7114ED1B5A00AEE977 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9BEA2B5014ED1B4A00AEE977 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9BEA2B6114ED1B4A00AEE977 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9BEA2B4E14ED1B4A00AEE977 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9BEA2B6314ED1B4A00AEE977 /* main.m in Sources */,
+				9BEA2B6714ED1B4A00AEE977 /* AppDelegate.m in Sources */,
+				9BEA2B8214ED1BC300AEE977 /* NGColoredViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9BEA2B7E14ED1B8300AEE977 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = NGVerticalTabBarController;
+			targetProxy = 9BEA2B7D14ED1B8300AEE977 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		9BEA2B5F14ED1B4A00AEE977 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9BEA2B6014ED1B4A00AEE977 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		9BEA2B6814ED1B4A00AEE977 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9BEA2B6914ED1B4A00AEE977 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		9BEA2B6B14ED1B4A00AEE977 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "NGVerticalTabBarControllerDemo/NGVerticalTabBarControllerDemo-Prefix.pch";
+				HEADER_SEARCH_PATHS = "../../NGVerticalTabBarController/**";
+				INFOPLIST_FILE = "NGVerticalTabBarControllerDemo/NGVerticalTabBarControllerDemo-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		9BEA2B6C14ED1B4A00AEE977 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "NGVerticalTabBarControllerDemo/NGVerticalTabBarControllerDemo-Prefix.pch";
+				HEADER_SEARCH_PATHS = "../../NGVerticalTabBarController/**";
+				INFOPLIST_FILE = "NGVerticalTabBarControllerDemo/NGVerticalTabBarControllerDemo-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9BEA2B4C14ED1B4A00AEE977 /* Build configuration list for PBXProject "NGVerticalTabBarControllerDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9BEA2B6814ED1B4A00AEE977 /* Debug */,
+				9BEA2B6914ED1B4A00AEE977 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9BEA2B6A14ED1B4A00AEE977 /* Build configuration list for PBXNativeTarget "NGVerticalTabBarControllerDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9BEA2B6B14ED1B4A00AEE977 /* Debug */,
+				9BEA2B6C14ED1B4A00AEE977 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9BEA2B4914ED1B4A00AEE977 /* Project object */;
+}

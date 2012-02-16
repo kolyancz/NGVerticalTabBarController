@@ -8,6 +8,7 @@
 
 #import "NGVerticalTabBarControllerDelegate.h"
 #import "NGVerticalTabBar.h"
+#import "NGVerticalTabBarCell.h"
 
 
 /** NGVerticalTabBarController is a vertical TabBar displayed on the left side of the device */
@@ -32,6 +33,6 @@
 - (void)setViewControllers:(NSArray *)viewControllers animated:(BOOL)animated;
 
 /** The designated initializer. */
-- (id)initWithViewControllers:(NSArray *)viewControllers;
+- (id)initWithDelegate:(id<NGVerticalTabBarControllerDelegate>)delegate;
 
 @end

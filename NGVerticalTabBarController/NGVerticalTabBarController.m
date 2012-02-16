@@ -1,7 +1,4 @@
 #import "NGVerticalTabBarController.h"
-#import "NGVerticalTabBarControllerDelegate.h"
-#import "NGVerticalTabBar.h"
-#import "NGVerticalTabBarCell.h"
 
 // the default width of the tabBar
 #define kNGTabBarControllerDefaultWidth     150.f
@@ -48,27 +45,22 @@
 #pragma mark - Lifecycle
 ////////////////////////////////////////////////////////////////////////
 
-- (id)initWithViewControllers:(NSArray *)viewControllers {
+- (id)initWithDelegate:(id<NGVerticalTabBarControllerDelegate>)delegate {
     if ((self = [super initWithNibName:nil bundle:nil])) {
         tabBarCellClass_ = [NGVerticalTabBarCell class];
         
-        if (viewControllers.count > 0) {
-            viewControllers_ = [NSMutableArray arrayWithArray:viewControllers];
-            selectedIndex_ = 0;
-        } else {
-            viewControllers_ = [NSMutableArray array];
-            selectedIndex_ = NSNotFound;
-        }
-       
+        selectedIndex_ = NSNotFound;
         oldSelectedIndex_ = NSNotFound;
         
+        // need to call setter here
+        self.delegate = delegate;
     }
     
     return self;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    return [self initWithViewControllers:nil];
+    return [self init];
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -77,6 +69,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    NSAssert(self.delegate != nil, @"No delegate set");
     
     CGFloat width = [self askDelegateForWidthOfTabBar];
     self.tabBar = [[NGVerticalTabBar alloc] initWithFrame:CGRectMake(0.f, 0.f, width, self.view.bounds.size.height) style:UITableViewStylePlain];
@@ -97,6 +91,20 @@
     [super viewWillAppear:animated];
     
     [self.tabBar reloadData];
+}
+
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    
+    CGRect childViewControllerFrame = self.childViewControllerFrame;
+    
+    for (UIViewController *viewController in self.viewControllers) {
+        viewController.view.frame = childViewControllerFrame;
+    }
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
+    return [self.selectedViewController shouldAutorotateToInterfaceOrientation:toInterfaceOrientation];
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -156,25 +164,23 @@
         
         for (UIViewController *viewController in viewControllers_) {
             [self addChildViewController:viewController];
+            
             viewController.view.frame = childViewControllerFrame;
+            viewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         }
         
-        if(self.selectedIndex == NSNotFound) {
+        if (self.selectedIndex == NSNotFound) {
             self.selectedIndex = 0;
         }
         
         [self.view addSubview:[[viewControllers_ objectAtIndex:self.selectedIndex] view]];
-        
         [self updateUI];
     }
 }
 
 - (void)setSelectedIndex:(NSUInteger)selectedIndex {
     if (selectedIndex != selectedIndex_) {
-        
         self.oldSelectedIndex = selectedIndex_;
-        
-        
         selectedIndex_ = selectedIndex;
         
         [self updateUI];
@@ -241,7 +247,6 @@
 
 - (void)updateUI {
     if (self.selectedIndex != NSNotFound) {
-        
         NSIndexPath *newSelectedIndexPath = [NSIndexPath indexPathForRow:self.selectedIndex inSection:0];
         UIViewController *newSelectedViewController = self.selectedViewController;
         [self.tabBar selectRowAtIndexPath:newSelectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
@@ -271,7 +276,10 @@
 }
 
 - (CGRect)childViewControllerFrame {
-    return UIEdgeInsetsInsetRect(self.view.bounds, UIEdgeInsetsMake(0, [self askDelegateForWidthOfTabBar], 0.f, 0.f));
+    CGRect bounds = self.view.bounds;
+    CGRect childFrame = UIEdgeInsetsInsetRect(bounds, UIEdgeInsetsMake(0.f, [self askDelegateForWidthOfTabBar]+1.f, 0.f, 0.f));
+    
+    return childFrame;
 }
 
 - (CGFloat)askDelegateForWidthOfTabBar {
