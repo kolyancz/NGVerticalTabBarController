@@ -101,6 +101,12 @@
     
     [self.tabBar reloadData];
     
+    if (self.selectedIndex != NSNotFound) {
+        [self.tabBar selectRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0]
+                                 animated:NO
+                           scrollPosition:UITableViewScrollPositionNone];
+    }
+    
     if (!self.containmentAPISupported) {
         [self.selectedViewController viewWillAppear:animated];
     }
