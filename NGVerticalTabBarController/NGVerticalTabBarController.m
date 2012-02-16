@@ -19,7 +19,7 @@
 
 // re-defined as read/write
 @property (nonatomic, strong, readwrite) NGVerticalTabBar *tabBar;
-
+/** the (computed) frame of the sub-viewcontrollers */
 @property (nonatomic, readonly) CGRect childViewControllerFrame;
 @property (nonatomic, assign) NSUInteger oldSelectedIndex;
 
@@ -228,9 +228,9 @@
         
         viewControllers_ = [NSMutableArray arrayWithArray:viewControllers];
         
-        // add new child view controller
         CGRect childViewControllerFrame = self.childViewControllerFrame;
         
+        // add new child view controller
         for (UIViewController *viewController in viewControllers_) {
             if (self.containmentAPISupported) {
                 [self addChildViewController:viewController];
@@ -240,8 +240,7 @@
             viewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         }
         
-        
-        if (self.selectedIndex == NSNotFound) {
+        if (self.selectedIndex == NSNotFound && viewControllers_.count > 0) {
             [self.view addSubview:[[viewControllers_ objectAtIndex:0] view]];
             self.selectedIndex = 0;
         } else {
@@ -375,6 +374,7 @@
 }
 
 - (BOOL)containmentAPISupported {
+    // containment API is supported on iOS 5 and up
     static BOOL containmentAPISupported;
     
     static dispatch_once_t onceToken;
@@ -411,7 +411,7 @@
 }
 
 - (CGFloat)askDelegateForHeightOfTabBarCellAtIndex:(NSUInteger)index {
-    if(delegateFlags_.heightForTabBarCellAtIndex) {
+    if (delegateFlags_.heightForTabBarCellAtIndex) {
         return [self.delegate heightForTabBarCell:self atIndex:index];
     }
     
