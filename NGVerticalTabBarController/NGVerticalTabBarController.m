@@ -3,6 +3,7 @@
 // the default width of the tabBar
 #define kNGTabBarControllerDefaultWidth     150.f
 #define kNGTabBarCellDefaultHeight          120.f
+#define kNGDefaultAnimationDuration          0.4f
 
 @interface NGVerticalTabBarController () <UITableViewDataSource, UITableViewDelegate> {
     // re-defined as mutable
@@ -23,6 +24,7 @@
 @property (nonatomic, readonly) CGRect childViewControllerFrame;
 @property (nonatomic, assign) NSUInteger oldSelectedIndex;
 @property (nonatomic, readonly) BOOL containmentAPISupported;
+@property (nonatomic, readonly) UIViewAnimationOptions currentActiveAnimationOptions;
 
 - (void)updateUI;
 
@@ -40,6 +42,8 @@
 @synthesize delegate = delegate_;
 @synthesize tabBar = tabBar_;
 @synthesize tabBarCellClass = tabBarCellClass_;
+@synthesize animation = animation_;
+@synthesize animationDuration = animationDuration_;
 @synthesize oldSelectedIndex = oldSelectedIndex_;
 
 ////////////////////////////////////////////////////////////////////////
@@ -52,6 +56,8 @@
         
         selectedIndex_ = NSNotFound;
         oldSelectedIndex_ = NSNotFound;
+        animation_ = NGVerticalTabBarControllerAnimationNone;
+        animationDuration_ = kNGDefaultAnimationDuration;
         
         // need to call setter here
         self.delegate = delegate;
@@ -297,13 +303,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // did the selection change?
-    if (indexPath.row != self.selectedIndex) {
-        UIViewController *viewController = [self.viewControllers objectAtIndex:indexPath.row];
-        
+    if (indexPath.row != self.selectedIndex) {        
         // updates the UI
         self.selectedIndex = indexPath.row;
-        // call the delegate that we changed selection
-        [self callDelegateDidSelectViewController:viewController atIndex:indexPath.row];
     }
 }
 
@@ -328,15 +330,45 @@
             [self.tabBar deselectRowAtIndexPath:oldSelectedIndexPath animated:YES];
             
             if (self.containmentAPISupported) {
+                UIViewAnimationOptions animationOptions = self.currentActiveAnimationOptions;
+                
+                // custom move animation
+                if (self.animation == NGVerticalTabBarControllerAnimationMove) {
+                    CGRect frame = self.childViewControllerFrame;
+                    
+                    if (self.oldSelectedIndex < self.selectedIndex) {
+                        frame.origin.y = frame.size.height;
+                    } else {
+                        frame.origin.y = -frame.size.height;
+                    }
+                    
+                    newSelectedViewController.view.frame = frame;
+                }
+                
                 [self transitionFromViewController:oldSelectedViewController
                                   toViewController:newSelectedViewController
-                                          duration:0.4f
-                                           options:(self.oldSelectedIndex > self.selectedIndex) ? UIViewAnimationOptionTransitionCurlDown : UIViewAnimationOptionTransitionCurlUp
+                                          duration:self.animationDuration
+                                           options:animationOptions
                                         animations:^{
-                                            // TODO: customize animation?
+                                            if (self.animation == NGVerticalTabBarControllerAnimationMove) {
+                                                CGRect frame = oldSelectedViewController.view.frame;
+                                                
+                                                newSelectedViewController.view.frame = frame;
+                                                
+                                                if (self.oldSelectedIndex < self.selectedIndex) {
+                                                    frame.origin.y = -frame.size.height;
+                                                } else {
+                                                    frame.origin.y = frame.size.height;
+                                                }
+                                                
+                                                oldSelectedViewController.view.frame = frame;
+                                            }
                                         } completion:^(BOOL finished) {
                                             if (finished) {
                                                 [newSelectedViewController didMoveToParentViewController:self];
+                                                
+                                                // call the delegate that we changed selection
+                                                [self callDelegateDidSelectViewController:newSelectedViewController atIndex:self.selectedIndex];
                                             }
                                         }];
             }
@@ -350,6 +382,9 @@
                 [newSelectedViewController viewDidAppear:NO];
                 [oldSelectedViewController.view removeFromSuperview];
                 [oldSelectedViewController viewDidDisappear:NO];
+                
+                // call the delegate that we changed selection
+                [self callDelegateDidSelectViewController:newSelectedViewController atIndex:self.selectedIndex];
             }
         }
         
@@ -383,6 +418,33 @@
     });
     
     return containmentAPISupported;
+}
+
+- (UIViewAnimationOptions)currentActiveAnimationOptions {
+    UIViewAnimationOptions animationOptions = UIViewAnimationOptionTransitionNone;
+    
+    switch (self.animation) {    
+        case NGVerticalTabBarControllerAnimationFade:
+            animationOptions = UIViewAnimationOptionTransitionCrossDissolve;
+            break;
+            
+        case NGVerticalTabBarControllerAnimationCurl:
+            animationOptions = (self.oldSelectedIndex > self.selectedIndex) ? UIViewAnimationOptionTransitionCurlDown : UIViewAnimationOptionTransitionCurlUp;
+            break;
+            
+        case NGVerticalTabBarControllerAnimationMove:
+            // this animation is done manually.
+            animationOptions = UIViewAnimationOptionLayoutSubviews;
+            break;
+            
+            
+        case NGVerticalTabBarControllerAnimationNone:
+        default:
+            // do nothing
+            break;
+    }
+    
+    return animationOptions;
 }
 
 - (CGFloat)delegatedTabBarWidth {

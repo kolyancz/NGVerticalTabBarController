@@ -26,6 +26,7 @@
     
     NGVerticalTabBarController *tabBarController = [[NGVerticalTabBarController alloc] initWithDelegate:self];
     
+    tabBarController.animation = NGVerticalTabBarControllerAnimationMove;
     tabBarController.viewControllers = viewController;
     self.window.rootViewController = tabBarController;
     

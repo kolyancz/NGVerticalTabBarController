@@ -9,6 +9,7 @@
 #import "NGVerticalTabBarControllerDelegate.h"
 #import "NGVerticalTabBar.h"
 #import "NGVerticalTabBarCell.h"
+#import "NGVerticalTabBarControllerAnimation.h"
 
 
 /** NGVerticalTabBarController is a vertical TabBar displayed on the left side of the device */
@@ -28,6 +29,11 @@
 @property (nonatomic, strong, readonly) NGVerticalTabBar *tabBar;
 /** The class of the tableViewCell of the tabBar, defaults to NGVerticalTabBarCell */
 @property (nonatomic, assign) Class tabBarCellClass;
+
+/** The animation used when changing selected tabBarItem, default: none */
+@property (nonatomic, assign) NGVerticalTabBarControllerAnimation animation;
+/** The duration of the used animation, only taken into account when animation is different from none */
+@property (nonatomic, assign) NSTimeInterval animationDuration;
 
 /** Sets the view controllers of the tab bar controller. */
 - (void)setViewControllers:(NSArray *)viewControllers animated:(BOOL)animated;
