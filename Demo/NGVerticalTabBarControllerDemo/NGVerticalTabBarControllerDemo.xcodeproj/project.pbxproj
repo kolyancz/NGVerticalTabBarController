@@ -252,6 +252,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = "-fobjc-arc";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -272,6 +273,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "-fobjc-arc";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -285,6 +287,8 @@
 				GCC_PREFIX_HEADER = "NGVerticalTabBarControllerDemo/NGVerticalTabBarControllerDemo-Prefix.pch";
 				HEADER_SEARCH_PATHS = "../../NGVerticalTabBarController/**";
 				INFOPLIST_FILE = "NGVerticalTabBarControllerDemo/NGVerticalTabBarControllerDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				OTHER_LDFLAGS = "-fobjc-arc";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -297,6 +301,8 @@
 				GCC_PREFIX_HEADER = "NGVerticalTabBarControllerDemo/NGVerticalTabBarControllerDemo-Prefix.pch";
 				HEADER_SEARCH_PATHS = "../../NGVerticalTabBarController/**";
 				INFOPLIST_FILE = "NGVerticalTabBarControllerDemo/NGVerticalTabBarControllerDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				OTHER_LDFLAGS = "-fobjc-arc";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

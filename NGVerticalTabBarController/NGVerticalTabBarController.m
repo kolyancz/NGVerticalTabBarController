@@ -23,6 +23,8 @@
 @property (nonatomic, readonly) CGRect childViewControllerFrame;
 @property (nonatomic, assign) NSUInteger oldSelectedIndex;
 
+@property (nonatomic, readonly) BOOL containmentAPISupported;
+
 - (void)updateUI;
 
 - (CGFloat)askDelegateForWidthOfTabBar;
@@ -84,6 +86,13 @@
     self.tabBar.delegate = nil;
     self.tabBar = nil;
     
+    if (self.containmentAPISupported) {
+        [self.selectedViewController removeFromParentViewController];
+    } else {
+        [self.selectedViewController.view removeFromSuperview];
+        self.selectedViewController.view = nil;
+    }
+    
     [super viewDidUnload];
 }
 
@@ -91,6 +100,34 @@
     [super viewWillAppear:animated];
     
     [self.tabBar reloadData];
+    
+    if (!self.containmentAPISupported) {
+        [self.selectedViewController viewWillAppear:animated];
+    }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    if (!self.containmentAPISupported) {
+        [self.selectedViewController viewDidAppear:animated];
+    }
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    if (!self.containmentAPISupported) {
+        [self.selectedViewController viewWillDisappear:animated];
+    }
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    
+    if (!self.containmentAPISupported) {
+        [self.selectedViewController viewDidDisappear:animated];
+    }
 }
 
 - (void)viewWillLayoutSubviews {
@@ -105,6 +142,30 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
     return [self.selectedViewController shouldAutorotateToInterfaceOrientation:toInterfaceOrientation];
+}
+
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    
+    if (!self.containmentAPISupported) {
+        [self.selectedViewController willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    }
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    
+    if (!self.containmentAPISupported) {
+        [self.selectedViewController willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    }
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+    
+    if (!self.containmentAPISupported) {
+        [self.selectedViewController didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -152,9 +213,11 @@
 
 - (void)setViewControllers:(NSArray *)viewControllers {
     if (viewControllers != viewControllers_) {
-        // remove old child view controller
-        for (UIViewController *viewController in viewControllers_) {
-            [viewController removeFromParentViewController];
+        if (self.containmentAPISupported) {
+            // remove old child view controller
+            for (UIViewController *viewController in viewControllers_) {
+                [viewController removeFromParentViewController];
+            }
         }
         
         viewControllers_ = [NSMutableArray arrayWithArray:viewControllers];
@@ -163,18 +226,21 @@
         CGRect childViewControllerFrame = self.childViewControllerFrame;
         
         for (UIViewController *viewController in viewControllers_) {
-            [self addChildViewController:viewController];
+            if (self.containmentAPISupported) {
+                [self addChildViewController:viewController];
+            }
             
             viewController.view.frame = childViewControllerFrame;
             viewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         }
         
-        if (self.selectedIndex == NSNotFound) {
-            self.selectedIndex = 0;
-        }
         
-        [self.view addSubview:[[viewControllers_ objectAtIndex:self.selectedIndex] view]];
-        [self updateUI];
+        if (self.selectedIndex == NSNotFound) {
+            [self.view addSubview:[[viewControllers_ objectAtIndex:0] view]];
+            self.selectedIndex = 0;
+        } else {
+            [self updateUI];
+        }
     }
 }
 
@@ -251,26 +317,46 @@
         UIViewController *newSelectedViewController = self.selectedViewController;
         [self.tabBar selectRowAtIndexPath:newSelectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
         
-        //show transition between old and new child viewcontroller
-        if(self.oldSelectedIndex != NSNotFound) {
-            NSIndexPath *oldSelectedIndexPath =[NSIndexPath indexPathForRow:self.oldSelectedIndex inSection:0];
+        // show transition between old and new child viewcontroller
+        if (self.oldSelectedIndex != NSNotFound) {
+            NSIndexPath *oldSelectedIndexPath = [NSIndexPath indexPathForRow:self.oldSelectedIndex inSection:0];
             UIViewController *oldSelectedViewController = [self.viewControllers objectAtIndex:oldSelectedIndexPath.row];
             [self.tabBar deselectRowAtIndexPath:oldSelectedIndexPath animated:YES];
-     
-            [self transitionFromViewController:oldSelectedViewController
-                              toViewController:newSelectedViewController
-                                      duration:0.4f
-                                       options:(self.oldSelectedIndex > self.selectedIndex)? UIViewAnimationOptionTransitionCurlDown : UIViewAnimationOptionTransitionCurlUp
-                                    animations:^{
-                                        // TODO: customize animation?
-                                    } completion:^(BOOL finished) {
-                                        if(finished){
-                                            [newSelectedViewController didMoveToParentViewController:self];
-                                        }
-                                    }];
+            
+            if (self.containmentAPISupported) {
+                [self transitionFromViewController:oldSelectedViewController
+                                  toViewController:newSelectedViewController
+                                          duration:0.4f
+                                           options:(self.oldSelectedIndex > self.selectedIndex) ? UIViewAnimationOptionTransitionCurlDown : UIViewAnimationOptionTransitionCurlUp
+                                        animations:^{
+                                            // TODO: customize animation?
+                                        } completion:^(BOOL finished) {
+                                            if (finished) {
+                                                [newSelectedViewController didMoveToParentViewController:self];
+                                            }
+                                        }];
+            }
+            
+            // no containment API (< iOS 5)
+            else {
+                [oldSelectedViewController viewWillDisappear:NO];
+                [newSelectedViewController viewWillAppear:NO];
+                newSelectedViewController.view.frame = self.childViewControllerFrame;
+                [self.view addSubview:newSelectedViewController.view];
+                [newSelectedViewController viewDidAppear:NO];
+                [oldSelectedViewController.view removeFromSuperview];
+                [oldSelectedViewController viewDidDisappear:NO];
+            }
         }
+        
+        // no old selected index path
         else {
-            [newSelectedViewController didMoveToParentViewController:self];
+            if (self.containmentAPISupported) {
+                [newSelectedViewController didMoveToParentViewController:self];
+            } else {
+                newSelectedViewController.view.frame = self.childViewControllerFrame;
+                [self.view addSubview:newSelectedViewController.view];
+            }
         }
     }
 }
@@ -280,6 +366,18 @@
     CGRect childFrame = UIEdgeInsetsInsetRect(bounds, UIEdgeInsetsMake(0.f, [self askDelegateForWidthOfTabBar]+1.f, 0.f, 0.f));
     
     return childFrame;
+}
+
+- (BOOL)containmentAPISupported {
+    static BOOL containmentAPISupported;
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        containmentAPISupported = ([self respondsToSelector:@selector(willMoveToParentViewController:)] &&
+                                   [self respondsToSelector:@selector(didMoveToParentViewController:)]);
+    });
+    
+    return containmentAPISupported;
 }
 
 - (CGFloat)askDelegateForWidthOfTabBar {
@@ -310,7 +408,8 @@
     if(delegateFlags_.heightForTabBarCellAtIndex) {
         return [self.delegate heightForTabBarCell:self atIndex:index];
     }
-
+    
+    // default cell height
     return kNGTabBarCellDefaultHeight;
 }
 

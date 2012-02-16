@@ -9,6 +9,8 @@
 #import "NGColoredViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
+#define NGLogFunction() NSLog(@"Method called: %s", __FUNCTION__)
+
 @implementation NGColoredViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -19,6 +21,10 @@
     return self;
 }
 
+////////////////////////////////////////////////////////////////////////
+#pragma mark - UIViewController
+////////////////////////////////////////////////////////////////////////
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -27,10 +33,60 @@
     self.view.backgroundColor = randomColor;
     self.view.layer.borderColor = [UIColor orangeColor].CGColor;
     self.view.layer.borderWidth = 2.f;
+    
+    NGLogFunction();
+}
+
+- (void)viewDidUnload {
+    [super viewDidUnload];
+    
+    NGLogFunction();
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+ 
+    NGLogFunction();
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    NGLogFunction();
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+	[super viewWillDisappear:animated];
+    
+    NGLogFunction();
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+	[super viewDidDisappear:animated];
+    
+    NGLogFunction();
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
     return YES;
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    
+    NGLogFunction();
+}
+
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    
+    NGLogFunction();
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+    
+    NGLogFunction();
 }
 
 @end
