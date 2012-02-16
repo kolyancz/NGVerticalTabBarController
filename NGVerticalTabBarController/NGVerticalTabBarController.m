@@ -22,15 +22,14 @@
 /** the (computed) frame of the sub-viewcontrollers */
 @property (nonatomic, readonly) CGRect childViewControllerFrame;
 @property (nonatomic, assign) NSUInteger oldSelectedIndex;
-
 @property (nonatomic, readonly) BOOL containmentAPISupported;
 
 - (void)updateUI;
 
-- (CGFloat)askDelegateForWidthOfTabBar;
-- (BOOL)askDelegateIfWeShouldSelectViewController:(UIViewController *)viewController atIndex:(NSUInteger)index;
+- (CGFloat)delegatedTabBarWidth;
+- (BOOL)delegatedDecisionIfWeShouldSelectViewController:(UIViewController *)viewController atIndex:(NSUInteger)index;
 - (void)callDelegateDidSelectViewController:(UIViewController *)viewController atIndex:(NSUInteger)index;
-- (CGFloat)askDelegateForHeightOfTabBarCellAtIndex:(NSUInteger)index;
+- (CGFloat)delegatedHeightOfTabBarCellAtIndex:(NSUInteger)index;
 
 @end
 
@@ -74,7 +73,7 @@
     
     NSAssert(self.delegate != nil, @"No delegate set");
     
-    CGFloat width = [self askDelegateForWidthOfTabBar];
+    CGFloat width = [self delegatedTabBarWidth];
     self.tabBar = [[NGVerticalTabBar alloc] initWithFrame:CGRectMake(0.f, 0.f, width, self.view.bounds.size.height) style:UITableViewStylePlain];
     self.tabBar.dataSource = self;
     self.tabBar.delegate = self;
@@ -289,7 +288,7 @@
 
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // ask the delegate if we can select the cell
-    if ([self askDelegateIfWeShouldSelectViewController:[self.viewControllers objectAtIndex:indexPath.row] atIndex:indexPath.row]) {
+    if ([self delegatedDecisionIfWeShouldSelectViewController:[self.viewControllers objectAtIndex:indexPath.row] atIndex:indexPath.row]) {
         return indexPath;
     }
     
@@ -309,7 +308,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return [self askDelegateForHeightOfTabBarCellAtIndex:[indexPath row]];
+    return [self delegatedHeightOfTabBarCellAtIndex:[indexPath row]];
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -368,7 +367,7 @@
 
 - (CGRect)childViewControllerFrame {
     CGRect bounds = self.view.bounds;
-    CGRect childFrame = UIEdgeInsetsInsetRect(bounds, UIEdgeInsetsMake(0.f, [self askDelegateForWidthOfTabBar]+1.f, 0.f, 0.f));
+    CGRect childFrame = UIEdgeInsetsInsetRect(bounds, UIEdgeInsetsMake(0.f, [self delegatedTabBarWidth]+1.f, 0.f, 0.f));
     
     return childFrame;
 }
@@ -386,7 +385,7 @@
     return containmentAPISupported;
 }
 
-- (CGFloat)askDelegateForWidthOfTabBar {
+- (CGFloat)delegatedTabBarWidth {
     if (delegateFlags_.widthOfTabBar) {
         return [self.delegate widthOfTabBarOfVerticalTabBarController:self];
     }
@@ -395,7 +394,7 @@
     return kNGTabBarControllerDefaultWidth;
 }
 
-- (BOOL)askDelegateIfWeShouldSelectViewController:(UIViewController *)viewController atIndex:(NSUInteger)index {
+- (BOOL)delegatedDecisionIfWeShouldSelectViewController:(UIViewController *)viewController atIndex:(NSUInteger)index {
     if (delegateFlags_.shouldSelectViewController) {
         return [self.delegate verticalTabBarController:self shouldSelectViewController:viewController atIndex:index];
     }
@@ -410,7 +409,7 @@
     }
 }
 
-- (CGFloat)askDelegateForHeightOfTabBarCellAtIndex:(NSUInteger)index {
+- (CGFloat)delegatedHeightOfTabBarCellAtIndex:(NSUInteger)index {
     if (delegateFlags_.heightForTabBarCellAtIndex) {
         return [self.delegate heightForTabBarCell:self atIndex:index];
     }
