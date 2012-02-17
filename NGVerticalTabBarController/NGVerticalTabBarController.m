@@ -312,13 +312,13 @@
     if (self.selectedIndex != NSNotFound) {
         NSIndexPath *newSelectedIndexPath = [NSIndexPath indexPathForRow:self.selectedIndex inSection:0];
         UIViewController *newSelectedViewController = self.selectedViewController;
-        [self.tabBar selectRowAtIndexPath:newSelectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+        [self.tabBar selectRowAtIndexPath:newSelectedIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
         
         // show transition between old and new child viewcontroller
         if (self.oldSelectedIndex != NSNotFound) {
             NSIndexPath *oldSelectedIndexPath = [NSIndexPath indexPathForRow:self.oldSelectedIndex inSection:0];
             UIViewController *oldSelectedViewController = [self.viewControllers objectAtIndex:oldSelectedIndexPath.row];
-            [self.tabBar deselectRowAtIndexPath:oldSelectedIndexPath animated:YES];
+            [self.tabBar deselectRowAtIndexPath:oldSelectedIndexPath animated:NO];
             
             if (self.containmentAPISupported) {
                 // custom move animation
