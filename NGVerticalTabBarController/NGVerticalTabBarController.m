@@ -21,7 +21,7 @@
 		unsigned int didSelectViewController:1;
 	} _delegateFlags;
     
-    BOOL _transitionAnimationActive;
+    BOOL _moveScaleAnimationActive;
 }
 
 // re-defined as read/write
@@ -65,7 +65,7 @@
         _oldSelectedIndex = NSNotFound;
         _animation = NGVerticalTabBarControllerAnimationNone;
         _animationDuration = kNGDefaultAnimationDuration;
-        _transitionAnimationActive = NO;
+        _moveScaleAnimationActive = NO;
         
         // need to call setter here
         self.delegate = delegate;
@@ -146,6 +146,18 @@
     
     if (!self.containmentAPISupported) {
         [self.selectedViewController viewDidDisappear:animated];
+    }
+}
+
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    
+    CGRect childViewControllerFrame = self.childViewControllerFrame;
+    
+    if (!_moveScaleAnimationActive) {
+        for (UIViewController *viewController in self.viewControllers) {
+            viewController.view.frame = childViewControllerFrame;
+        }
     }
 }
 
@@ -343,6 +355,8 @@
                     newSelectedViewController.view.frame = frame;
                     
                     if (self.animation == NGVerticalTabBarControllerAnimationMoveAndScale) {
+                        _moveScaleAnimationActive = YES;
+                        
                         [UIView animateWithDuration:kNGScaleDuration
                                          animations:^{
                                              oldSelectedViewController.view.transform = CGAffineTransformMakeScale(kNGScaleFactor, kNGScaleFactor);
@@ -354,7 +368,6 @@
                 // if the user switches tabs too fast the viewControllers disappear from view hierarchy
                 // this is a workaround to not allow the user to switch during an animated transition
                 self.tabBar.userInteractionEnabled = NO;
-                _transitionAnimationActive = YES;
                 
                 [self transitionFromViewController:oldSelectedViewController
                                   toViewController:newSelectedViewController
@@ -385,7 +398,7 @@
                                                                      newSelectedViewController.view.transform = CGAffineTransformMakeScale(1.f, 1.f);
                                                                  } completion:^(BOOL finished) {
                                                                      newSelectedViewController.view.frame = self.childViewControllerFrame;
-                                                                     _transitionAnimationActive = NO;
+                                                                     _moveScaleAnimationActive = NO;
                                                                  }];
                                             }
                                             
