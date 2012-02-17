@@ -3,7 +3,7 @@
 // the default width of the tabBar
 #define kNGTabBarControllerDefaultWidth     150.f
 #define kNGTabBarCellDefaultHeight          120.f
-#define kNGDefaultAnimationDuration          0.4f
+#define kNGDefaultAnimationDuration          0.3f
 
 @interface NGVerticalTabBarController () <UITableViewDataSource, UITableViewDelegate> {
     // re-defined as mutable
@@ -239,6 +239,7 @@
         for (UIViewController *viewController in viewControllers_) {
             if (self.containmentAPISupported) {
                 [self addChildViewController:viewController];
+                [viewController didMoveToParentViewController:self];
             }
             
             viewController.view.frame = childViewControllerFrame;
@@ -330,10 +331,9 @@
             [self.tabBar deselectRowAtIndexPath:oldSelectedIndexPath animated:YES];
             
             if (self.containmentAPISupported) {
-                UIViewAnimationOptions animationOptions = self.currentActiveAnimationOptions;
-                
                 // custom move animation
-                if (self.animation == NGVerticalTabBarControllerAnimationMove) {
+                if (self.animation == NGVerticalTabBarControllerAnimationMove ||
+                    self.animation == NGVerticalTabBarControllerAnimationMoveAndScale) {
                     CGRect frame = self.childViewControllerFrame;
                     
                     if (self.oldSelectedIndex < self.selectedIndex) {
@@ -345,13 +345,18 @@
                     newSelectedViewController.view.frame = frame;
                 }
                 
+                // if the user switches tabs too fast the viewControllers disappear from view hierarchy
+                // this is a workaround to not allow the user to switch during an animated transition
+                self.tabBar.userInteractionEnabled = NO;
+                
                 [self transitionFromViewController:oldSelectedViewController
                                   toViewController:newSelectedViewController
                                           duration:self.animationDuration
-                                           options:animationOptions
+                                           options:self.currentActiveAnimationOptions
                                         animations:^{
-                                            if (self.animation == NGVerticalTabBarControllerAnimationMove) {
-                                                CGRect frame = oldSelectedViewController.view.frame;
+                                            if (self.animation == NGVerticalTabBarControllerAnimationMove ||
+                                                self.animation == NGVerticalTabBarControllerAnimationMoveAndScale) {
+                                                CGRect frame = self.childViewControllerFrame;
                                                 
                                                 newSelectedViewController.view.frame = frame;
                                                 
@@ -364,12 +369,10 @@
                                                 oldSelectedViewController.view.frame = frame;
                                             }
                                         } completion:^(BOOL finished) {
-                                            if (finished) {
-                                                [newSelectedViewController didMoveToParentViewController:self];
-                                                
-                                                // call the delegate that we changed selection
-                                                [self callDelegateDidSelectViewController:newSelectedViewController atIndex:self.selectedIndex];
-                                            }
+                                            self.tabBar.userInteractionEnabled = YES;
+                                            
+                                            // call the delegate that we changed selection
+                                            [self callDelegateDidSelectViewController:newSelectedViewController atIndex:self.selectedIndex];
                                         }];
             }
             
@@ -433,6 +436,7 @@
             break;
             
         case NGVerticalTabBarControllerAnimationMove:
+        case NGVerticalTabBarControllerAnimationMoveAndScale:
             // this animation is done manually.
             animationOptions = UIViewAnimationOptionLayoutSubviews;
             break;

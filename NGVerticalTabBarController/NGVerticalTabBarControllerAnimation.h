@@ -10,8 +10,9 @@
  The animation used when we change the selected tabItem, default is none. Animations are only supported on iOS 5.
  */
 typedef enum {
-    NGVerticalTabBarControllerAnimationNone,
+    NGVerticalTabBarControllerAnimationNone = 0,
     NGVerticalTabBarControllerAnimationFade,
     NGVerticalTabBarControllerAnimationCurl,
-    NGVerticalTabBarControllerAnimationMove
+    NGVerticalTabBarControllerAnimationMove,
+    NGVerticalTabBarControllerAnimationMoveAndScale
 } NGVerticalTabBarControllerAnimation;

@@ -34,6 +34,18 @@
     self.view.layer.borderColor = [UIColor orangeColor].CGColor;
     self.view.layer.borderWidth = 2.f;
     
+    UIView *blackView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)];
+    blackView.backgroundColor = [UIColor blackColor];
+    blackView.center = self.view.center;
+    blackView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin
+                               | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+    [self.view addSubview:blackView];
+    
+    UIView *whiteView = [[UIView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width - 120, 20, 100, 100)];
+    whiteView.backgroundColor = [UIColor whiteColor];
+    whiteView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+    [self.view addSubview:whiteView];
+    
     NGLogFunction();
 }
 
