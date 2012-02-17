@@ -141,16 +141,6 @@
     }
 }
 
-- (void)viewWillLayoutSubviews {
-    [super viewWillLayoutSubviews];
-    
-    CGRect childViewControllerFrame = self.childViewControllerFrame;
-    
-    for (UIViewController *viewController in self.viewControllers) {
-        viewController.view.frame = childViewControllerFrame;
-    }
-}
-
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
     return [self.selectedViewController shouldAutorotateToInterfaceOrientation:toInterfaceOrientation];
 }
@@ -393,9 +383,7 @@
         
         // no old selected index path
         else {
-            if (self.containmentAPISupported) {
-                [newSelectedViewController didMoveToParentViewController:self];
-            } else {
+            if (!self.containmentAPISupported) {
                 newSelectedViewController.view.frame = self.childViewControllerFrame;
                 [self.view addSubview:newSelectedViewController.view];
             }
@@ -417,7 +405,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         containmentAPISupported = ([self respondsToSelector:@selector(willMoveToParentViewController:)] &&
-                                   [self respondsToSelector:@selector(didMoveToParentViewController:)]);
+                                   [self respondsToSelector:@selector(didMoveToParentViewController:)] && 
+                                   [self respondsToSelector:@selector(transitionFromViewController:toViewController:duration:options:animations:completion:)]);
     });
     
     return containmentAPISupported;
