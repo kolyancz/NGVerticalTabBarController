@@ -399,11 +399,14 @@
                                                                  } completion:^(BOOL finished) {
                                                                      newSelectedViewController.view.frame = self.childViewControllerFrame;
                                                                      _moveScaleAnimationActive = NO;
+                                                                     
+                                                                     // call the delegate that we changed selection
+                                                                     [self callDelegateDidSelectViewController:newSelectedViewController atIndex:self.selectedIndex];
                                                                  }];
+                                            } else {
+                                                // call the delegate that we changed selection
+                                                [self callDelegateDidSelectViewController:newSelectedViewController atIndex:self.selectedIndex];
                                             }
-                                            
-                                            // call the delegate that we changed selection
-                                            [self callDelegateDidSelectViewController:newSelectedViewController atIndex:self.selectedIndex];
                                         }];
             }
             
