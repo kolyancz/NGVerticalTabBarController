@@ -1,13 +1,17 @@
 #import "NGVerticalTabBarController.h"
 
+
 // the default width of the tabBar
-#define kNGTabBarControllerDefaultWidth     150.f
-#define kNGTabBarCellDefaultHeight          120.f
-#define kNGDefaultAnimationDuration          0.4f
+#define kNGTabBarControllerDefaultWidth     150.0f
+#define kNGTabBarCellDefaultHeight          120.0f
+#define kNGDefaultAnimationDuration           0.3f
+#define kNGScaleFactor                        0.98f
+#define kNGScaleDuration                      0.15f
+
 
 @interface NGVerticalTabBarController () <UITableViewDataSource, UITableViewDelegate> {
     // re-defined as mutable
-    NSMutableArray *viewControllers_;
+    NSMutableArray *_viewControllers;
     
     // flags for methods implemented in the delegate
     struct {
@@ -15,7 +19,9 @@
         unsigned int heightForTabBarCellAtIndex:1;
 		unsigned int shouldSelectViewController:1;
 		unsigned int didSelectViewController:1;
-	} delegateFlags_;
+	} _delegateFlags;
+    
+    BOOL _moveScaleAnimationActive;
 }
 
 // re-defined as read/write
@@ -25,7 +31,6 @@
 @property (nonatomic, assign) NSUInteger oldSelectedIndex;
 @property (nonatomic, readonly) BOOL containmentAPISupported;
 @property (nonatomic, readonly) UIViewAnimationOptions currentActiveAnimationOptions;
-@property (nonatomic, readwrite) BOOL isAnimating;
 
 - (void)updateUI;
 
@@ -36,17 +41,17 @@
 
 @end
 
+
 @implementation NGVerticalTabBarController
 
-@synthesize viewControllers = viewControllers_;
-@synthesize selectedIndex = selectedIndex_;
-@synthesize delegate = delegate_;
-@synthesize tabBar = tabBar_;
-@synthesize tabBarCellClass = tabBarCellClass_;
-@synthesize animation = animation_;
-@synthesize animationDuration = animationDuration_;
-@synthesize oldSelectedIndex = oldSelectedIndex_;
-@synthesize isAnimating = isAnimating_;
+@synthesize viewControllers = _viewControllers;
+@synthesize selectedIndex = _selectedIndex;
+@synthesize delegate = _delegate;
+@synthesize tabBar = _tabBar;
+@synthesize tabBarCellClass = _tabBarCellClass;
+@synthesize animation = _animation;
+@synthesize animationDuration = _animationDuration;
+@synthesize oldSelectedIndex = _oldSelectedIndex;
 
 ////////////////////////////////////////////////////////////////////////
 #pragma mark - Lifecycle
@@ -54,13 +59,13 @@
 
 - (id)initWithDelegate:(id<NGVerticalTabBarControllerDelegate>)delegate {
     if ((self = [super initWithNibName:nil bundle:nil])) {
-        tabBarCellClass_ = [NGVerticalTabBarCell class];
+        _tabBarCellClass = [NGVerticalTabBarCell class];
         
-        selectedIndex_ = NSNotFound;
-        oldSelectedIndex_ = NSNotFound;
-        animation_ = NGVerticalTabBarControllerAnimationNone;
-        animationDuration_ = kNGDefaultAnimationDuration;
-        isAnimating_ = NO;
+        _selectedIndex = NSNotFound;
+        _oldSelectedIndex = NSNotFound;
+        _animation = NGVerticalTabBarControllerAnimationNone;
+        _animationDuration = kNGDefaultAnimationDuration;
+        _moveScaleAnimationActive = NO;
         
         // need to call setter here
         self.delegate = delegate;
@@ -149,8 +154,10 @@
     
     CGRect childViewControllerFrame = self.childViewControllerFrame;
     
-    for (UIViewController *viewController in self.viewControllers) {
-        viewController.view.frame = childViewControllerFrame;
+    if (!_moveScaleAnimationActive) {
+        for (UIViewController *viewController in self.viewControllers) {
+            viewController.view.frame = childViewControllerFrame;
+        }
     }
 }
 
@@ -187,14 +194,14 @@
 ////////////////////////////////////////////////////////////////////////
 
 - (void)setDelegate:(id<NGVerticalTabBarControllerDelegate>)delegate {
-    if (delegate != delegate_) {
-        delegate_ = delegate;
+    if (delegate != _delegate) {
+        _delegate = delegate;
         
         // update delegate flags
-        delegateFlags_.widthOfTabBar = [delegate respondsToSelector:@selector(widthOfTabBarOfVerticalTabBarController:)];
-        delegateFlags_.heightForTabBarCellAtIndex = [delegate respondsToSelector:@selector(heightForTabBarCell:atIndex:)];
-        delegateFlags_.shouldSelectViewController = [delegate respondsToSelector:@selector(verticalTabBarController:shouldSelectViewController:atIndex:)];
-        delegateFlags_.didSelectViewController = [delegate respondsToSelector:@selector(verticalTabBarController:didSelectViewController:atIndex:)];
+        _delegateFlags.widthOfTabBar = [delegate respondsToSelector:@selector(widthOfTabBarOfVerticalTabBarController:)];
+        _delegateFlags.heightForTabBarCellAtIndex = [delegate respondsToSelector:@selector(heightForTabBarCell:atIndex:)];
+        _delegateFlags.shouldSelectViewController = [delegate respondsToSelector:@selector(verticalTabBarController:shouldSelectViewController:atIndex:)];
+        _delegateFlags.didSelectViewController = [delegate respondsToSelector:@selector(verticalTabBarController:didSelectViewController:atIndex:)];
     }
 }
 
@@ -226,30 +233,31 @@
 }
 
 - (void)setViewControllers:(NSArray *)viewControllers {
-    if (viewControllers != viewControllers_) {
+    if (viewControllers != _viewControllers) {
         if (self.containmentAPISupported) {
             // remove old child view controller
-            for (UIViewController *viewController in viewControllers_) {
+            for (UIViewController *viewController in _viewControllers) {
                 [viewController removeFromParentViewController];
             }
         }
         
-        viewControllers_ = [NSMutableArray arrayWithArray:viewControllers];
+        _viewControllers = [NSMutableArray arrayWithArray:viewControllers];
         
         CGRect childViewControllerFrame = self.childViewControllerFrame;
         
         // add new child view controller
-        for (UIViewController *viewController in viewControllers_) {
+        for (UIViewController *viewController in _viewControllers) {
             if (self.containmentAPISupported) {
                 [self addChildViewController:viewController];
+                [viewController didMoveToParentViewController:self];
             }
             
             viewController.view.frame = childViewControllerFrame;
             viewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         }
         
-        if (self.selectedIndex == NSNotFound && viewControllers_.count > 0) {
-            [self.view addSubview:[[viewControllers_ objectAtIndex:0] view]];
+        if (self.selectedIndex == NSNotFound && _viewControllers.count > 0) {
+            [self.view addSubview:[[_viewControllers objectAtIndex:0] view]];
             self.selectedIndex = 0;
         } else {
             [self updateUI];
@@ -258,9 +266,9 @@
 }
 
 - (void)setSelectedIndex:(NSUInteger)selectedIndex {
-    if (selectedIndex != selectedIndex_) {
-        self.oldSelectedIndex = selectedIndex_;
-        selectedIndex_ = selectedIndex;
+    if (selectedIndex != _selectedIndex) {
+        self.oldSelectedIndex = _selectedIndex;
+        _selectedIndex = selectedIndex;
         
         [self updateUI];
     }
@@ -324,19 +332,18 @@
     if (self.selectedIndex != NSNotFound) {
         NSIndexPath *newSelectedIndexPath = [NSIndexPath indexPathForRow:self.selectedIndex inSection:0];
         UIViewController *newSelectedViewController = self.selectedViewController;
-        [self.tabBar selectRowAtIndexPath:newSelectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+        [self.tabBar selectRowAtIndexPath:newSelectedIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
         
         // show transition between old and new child viewcontroller
         if (self.oldSelectedIndex != NSNotFound) {
             NSIndexPath *oldSelectedIndexPath = [NSIndexPath indexPathForRow:self.oldSelectedIndex inSection:0];
             UIViewController *oldSelectedViewController = [self.viewControllers objectAtIndex:oldSelectedIndexPath.row];
-            [self.tabBar deselectRowAtIndexPath:oldSelectedIndexPath animated:YES];
+            [self.tabBar deselectRowAtIndexPath:oldSelectedIndexPath animated:NO];
             
-            if (self.containmentAPISupported) {
-                UIViewAnimationOptions animationOptions = self.currentActiveAnimationOptions;
-                
+            if (self.containmentAPISupported) { 
                 // custom move animation
-                if (self.animation == NGVerticalTabBarControllerAnimationMove) {
+                if (self.animation == NGVerticalTabBarControllerAnimationMove ||
+                    self.animation == NGVerticalTabBarControllerAnimationMoveAndScale) {
                     CGRect frame = self.childViewControllerFrame;
                     
                     if (self.oldSelectedIndex < self.selectedIndex) {
@@ -346,16 +353,29 @@
                     }
                     
                     newSelectedViewController.view.frame = frame;
+                    
+                    if (self.animation == NGVerticalTabBarControllerAnimationMoveAndScale) {
+                        _moveScaleAnimationActive = YES;
+                        
+                        [UIView animateWithDuration:kNGScaleDuration
+                                         animations:^{
+                                             oldSelectedViewController.view.transform = CGAffineTransformMakeScale(kNGScaleFactor, kNGScaleFactor);
+                                             newSelectedViewController.view.transform = CGAffineTransformMakeScale(kNGScaleFactor, kNGScaleFactor);
+                                         }];
+                    }
                 }
                 
-                self.isAnimating = YES;
+                // if the user switches tabs too fast the viewControllers disappear from view hierarchy
+                // this is a workaround to not allow the user to switch during an animated transition
+                self.tabBar.userInteractionEnabled = NO;
                 
                 [self transitionFromViewController:oldSelectedViewController
                                   toViewController:newSelectedViewController
                                           duration:self.animationDuration
-                                           options:animationOptions
+                                           options:self.currentActiveAnimationOptions
                                         animations:^{
-                                            if (self.animation == NGVerticalTabBarControllerAnimationMove) {
+                                            if (self.animation == NGVerticalTabBarControllerAnimationMove ||
+                                                self.animation == NGVerticalTabBarControllerAnimationMoveAndScale) {
                                                 CGRect frame = oldSelectedViewController.view.frame;
                                                 
                                                 newSelectedViewController.view.frame = frame;
@@ -369,9 +389,21 @@
                                                 oldSelectedViewController.view.frame = frame;
                                             }
                                         } completion:^(BOOL finished) {
-                                            if (finished) {
-                                                [newSelectedViewController didMoveToParentViewController:self];
-                                                self.isAnimating = NO;
+                                            self.tabBar.userInteractionEnabled = YES;
+                                            
+                                            if (self.animation == NGVerticalTabBarControllerAnimationMoveAndScale) {
+                                                [UIView animateWithDuration:kNGScaleDuration
+                                                                 animations:^{
+                                                                     oldSelectedViewController.view.transform = CGAffineTransformMakeScale(1.f, 1.f);
+                                                                     newSelectedViewController.view.transform = CGAffineTransformMakeScale(1.f, 1.f);
+                                                                 } completion:^(BOOL finished) {
+                                                                     newSelectedViewController.view.frame = self.childViewControllerFrame;
+                                                                     _moveScaleAnimationActive = NO;
+                                                                     
+                                                                     // call the delegate that we changed selection
+                                                                     [self callDelegateDidSelectViewController:newSelectedViewController atIndex:self.selectedIndex];
+                                                                 }];
+                                            } else {
                                                 // call the delegate that we changed selection
                                                 [self callDelegateDidSelectViewController:newSelectedViewController atIndex:self.selectedIndex];
                                             }
@@ -395,9 +427,7 @@
         
         // no old selected index path
         else {
-            if (self.containmentAPISupported) {
-                [newSelectedViewController didMoveToParentViewController:self];
-            } else {
+            if (!self.containmentAPISupported) {
                 newSelectedViewController.view.frame = self.childViewControllerFrame;
                 [self.view addSubview:newSelectedViewController.view];
             }
@@ -419,7 +449,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         containmentAPISupported = ([self respondsToSelector:@selector(willMoveToParentViewController:)] &&
-                                   [self respondsToSelector:@selector(didMoveToParentViewController:)]);
+                                   [self respondsToSelector:@selector(didMoveToParentViewController:)] && 
+                                   [self respondsToSelector:@selector(transitionFromViewController:toViewController:duration:options:animations:completion:)]);
     });
     
     return containmentAPISupported;
@@ -438,6 +469,7 @@
             break;
             
         case NGVerticalTabBarControllerAnimationMove:
+        case NGVerticalTabBarControllerAnimationMoveAndScale:
             // this animation is done manually.
             animationOptions = UIViewAnimationOptionLayoutSubviews;
             break;
@@ -453,7 +485,7 @@
 }
 
 - (CGFloat)delegatedTabBarWidth {
-    if (delegateFlags_.widthOfTabBar) {
+    if (_delegateFlags.widthOfTabBar) {
         return [self.delegate widthOfTabBarOfVerticalTabBarController:self];
     }
     
@@ -462,7 +494,7 @@
 }
 
 - (BOOL)delegatedDecisionIfWeShouldSelectViewController:(UIViewController *)viewController atIndex:(NSUInteger)index {
-    if (delegateFlags_.shouldSelectViewController) {
+    if (_delegateFlags.shouldSelectViewController) {
         return [self.delegate verticalTabBarController:self shouldSelectViewController:viewController atIndex:index];
     }
     
@@ -471,13 +503,13 @@
 }
 
 - (void)callDelegateDidSelectViewController:(UIViewController *)viewController atIndex:(NSUInteger)index {
-    if (delegateFlags_.didSelectViewController) {
+    if (_delegateFlags.didSelectViewController) {
         [self.delegate verticalTabBarController:self didSelectViewController:viewController atIndex:index];
     }
 }
 
 - (CGFloat)delegatedHeightOfTabBarCellAtIndex:(NSUInteger)index {
-    if (delegateFlags_.heightForTabBarCellAtIndex) {
+    if (_delegateFlags.heightForTabBarCellAtIndex) {
         return [self.delegate heightForTabBarCell:self atIndex:index];
     }
     

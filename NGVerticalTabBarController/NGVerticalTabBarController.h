@@ -35,8 +35,6 @@
 /** The duration of the used animation, only taken into account when animation is different from none */
 @property (nonatomic, assign) NSTimeInterval animationDuration;
 
-@property (nonatomic, readonly) BOOL isAnimating;
-
 /** Sets the view controllers of the tab bar controller. */
 - (void)setViewControllers:(NSArray *)viewControllers animated:(BOOL)animated;
 
