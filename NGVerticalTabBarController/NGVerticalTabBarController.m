@@ -25,6 +25,7 @@
 @property (nonatomic, assign) NSUInteger oldSelectedIndex;
 @property (nonatomic, readonly) BOOL containmentAPISupported;
 @property (nonatomic, readonly) UIViewAnimationOptions currentActiveAnimationOptions;
+@property (nonatomic, readwrite) BOOL isAnimating;
 
 - (void)updateUI;
 
@@ -45,6 +46,7 @@
 @synthesize animation = animation_;
 @synthesize animationDuration = animationDuration_;
 @synthesize oldSelectedIndex = oldSelectedIndex_;
+@synthesize isAnimating = isAnimating_;
 
 ////////////////////////////////////////////////////////////////////////
 #pragma mark - Lifecycle
@@ -58,6 +60,7 @@
         oldSelectedIndex_ = NSNotFound;
         animation_ = NGVerticalTabBarControllerAnimationNone;
         animationDuration_ = kNGDefaultAnimationDuration;
+        isAnimating_ = NO;
         
         // need to call setter here
         self.delegate = delegate;
@@ -345,6 +348,8 @@
                     newSelectedViewController.view.frame = frame;
                 }
                 
+                self.isAnimating = YES;
+                
                 [self transitionFromViewController:oldSelectedViewController
                                   toViewController:newSelectedViewController
                                           duration:self.animationDuration
@@ -366,7 +371,7 @@
                                         } completion:^(BOOL finished) {
                                             if (finished) {
                                                 [newSelectedViewController didMoveToParentViewController:self];
-                                                
+                                                self.isAnimating = NO;
                                                 // call the delegate that we changed selection
                                                 [self callDelegateDidSelectViewController:newSelectedViewController atIndex:self.selectedIndex];
                                             }
